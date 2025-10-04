@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('ФИО: Ларин Дмитрий Сергеевич'),
-            const Text('Группа ИКБО-07-22'),
+            const Text('Группа  ИКБО-07-22'),
             const Text('Номер студенческого билета: 22И1702'),
           ],
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/schedule_widgets.dart';
+import '../utils/listview_widget.dart';
 
 class ScheduleScreen extends StatelessWidget {
   const ScheduleScreen({super.key});
@@ -23,11 +23,13 @@ class ScheduleScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  ScheduleDayWidget(
-                    day: 'Суббота',
-                    subjects: [
-                      '09:00 - 19:30\nРазработка кроссплатформенных мобильных приложений',
-                    ],
+                  // Виджет для списка предметов
+                  ListViewWidget(
+                    title: 'Предметы',
+                    hintText: 'Добавить предмет',
+                    emptyMessage: 'Добавьте предметы в расписание',
+                    icon: Icons.book,
+                    color: Colors.blue,
                   ),
                 ],
               ),
@@ -37,5 +39,4 @@ class ScheduleScreen extends StatelessWidget {
       ),
     );
   }
-
 }

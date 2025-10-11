@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/grades_widgets.dart';
+import '../utils/listview_separated_widget.dart';
 
 class GradesScreen extends StatelessWidget {
   const GradesScreen({super.key});
@@ -23,21 +23,20 @@ class GradesScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  SubjectGradeWidget(subject: 'Разработка кроссплатформенных мобильных приложений', grade: 5),
+                  ListViewSeparatedWidget(
+                    title: 'Оценки',
+                    hintText: 'Добавить оценку',
+                    emptyMessage: 'Добавьте оценки',
+                    icon: Icons.grade,
+                    color: Colors.orange,
+                    showEditButton: true,
+                  ),
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          GradesStatsWidget(
-            averageGrade: 5,
-            excellentCount: 1,
-            goodCount: 0,
-            satisfactoryCount: 0,
           ),
         ],
       ),
     );
   }
-
 }

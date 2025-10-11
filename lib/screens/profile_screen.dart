@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/column_list_widget.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -63,11 +64,6 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Академическая информация',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
                   const Row(
                     children: [
                       Icon(Icons.calendar_today, color: Colors.green),
@@ -82,6 +78,15 @@ class ProfileScreen extends StatelessWidget {
                       SizedBox(width: 8),
                       Text('Специальность: ПИ'),
                     ],
+                  ),
+                  const SizedBox(height: 16),
+                  // Виджет для списка достижений
+                  ColumnListWidget(
+                    title: 'Достижения и награды',
+                    hintText: 'Добавить достижение',
+                    emptyMessage: 'Добавьте свои достижения',
+                    icon: Icons.star,
+                    color: Colors.amber,
                   ),
                 ],
               ),

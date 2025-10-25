@@ -9,6 +9,7 @@ class Message {
   final MessageType type;
   final bool isRead;
   final String? replyToMessageId;
+  final String? imageUrl;
 
   const Message({
     required this.id,
@@ -19,6 +20,7 @@ class Message {
     this.type = MessageType.text,
     this.isRead = false,
     this.replyToMessageId,
+    this.imageUrl,
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
@@ -29,11 +31,12 @@ class Message {
       content: json['content'],
       timestamp: DateTime.parse(json['timestamp']),
       type: MessageType.values.firstWhere(
-        (e) => e.toString() == 'MessageType.${json['type']}',
+            (e) => e.toString() == 'MessageType.${json['type']}',
         orElse: () => MessageType.text,
       ),
       isRead: json['isRead'] ?? false,
       replyToMessageId: json['replyToMessageId'],
+      imageUrl: json['imageUrl'],
     );
   }
 
@@ -47,6 +50,7 @@ class Message {
       'type': type.toString().split('.').last,
       'isRead': isRead,
       'replyToMessageId': replyToMessageId,
+      'imageUrl': imageUrl,
     };
   }
 
@@ -59,6 +63,7 @@ class Message {
     MessageType? type,
     bool? isRead,
     String? replyToMessageId,
+    String? imageUrl,
   }) {
     return Message(
       id: id ?? this.id,
@@ -69,6 +74,7 @@ class Message {
       type: type ?? this.type,
       isRead: isRead ?? this.isRead,
       replyToMessageId: replyToMessageId ?? this.replyToMessageId,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 }
@@ -80,4 +86,3 @@ enum MessageType {
   voice,
   video,
 }
-

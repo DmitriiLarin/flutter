@@ -28,6 +28,14 @@ class _ChatScreenState extends State<ChatScreen> {
     isOnline: true,
   );
 
+  final List<String> _imageUrls = [
+    'https://i.pinimg.com/videos/thumbnails/originals/b8/3f/e1/b83fe15d51ecb3f5f15b85361bd67119.0000000.jpg',
+    'https://avatars.mds.yandex.net/i?id=24bb0ea447c807287c172e5cdb679614_l-4628144-images-thumbs&n=13',
+    'https://avatars.mds.yandex.net/i?id=6eee8575c67c88bb6918514c5a34e9cc_l-13285290-images-thumbs&n=13',
+    'https://rusvesna.su/sites/default/files/styles/orign_wm/public/tramp_51.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80_%D0%9F%D1%83%D1%82%D0%B8%D0%BD_%2831-12-2021%29.jpg/1200px-%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80_%D0%9F%D1%83%D1%82%D0%B8%D0%BD_%2831-12-2021%29.jpg',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +63,46 @@ class _ChatScreenState extends State<ChatScreen> {
           content: 'Привет! А ты уже скачал MAX?',
           timestamp: DateTime.now().subtract(const Duration(minutes: 10)),
         ),
+        Message(
+          id: '2',
+          chatId: widget.chat.id,
+          sender: otherUser,
+          content: '',
+          imageUrl: _imageUrls[0],
+          timestamp: DateTime.now().subtract(const Duration(minutes: 7)),
+        ),
+        Message(
+          id: '3',
+          chatId: widget.chat.id,
+          sender: _currentUser,
+          content: '',
+          imageUrl: _imageUrls[1],
+          timestamp: DateTime.now().subtract(const Duration(minutes: 7)),
+        ),
+        Message(
+          id: '4',
+          chatId: widget.chat.id,
+          sender: _currentUser,
+          content: '',
+          imageUrl: _imageUrls[2],
+          timestamp: DateTime.now().subtract(const Duration(minutes: 7)),
+        ),
+        Message(
+          id: '5',
+          chatId: widget.chat.id,
+          sender: _currentUser,
+          content: '',
+          imageUrl: _imageUrls[3],
+          timestamp: DateTime.now().subtract(const Duration(minutes: 7)),
+        ),
+        Message(
+          id: '6',
+          chatId: widget.chat.id,
+          sender: otherUser,
+          content: '',
+          imageUrl: _imageUrls[4],
+          timestamp: DateTime.now().subtract(const Duration(minutes: 7)),
+        ),
       ]);
     });
   }
@@ -79,6 +127,22 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollToBottom();
   }
 
+  void _sendImage(String imageUrl) {
+    final message = Message(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      chatId: widget.chat.id,
+      sender: _currentUser,
+      content: '',
+      imageUrl: imageUrl,
+      timestamp: DateTime.now(),
+    );
+
+    setState(() {
+      _messages.add(message);
+    });
+    _scrollToBottom();
+  }
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -91,6 +155,81 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  void _showImageDialog(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Stack(
+          children: [
+            Center(
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.contain,
+              ),
+            ),
+            Positioned(
+              top: 40,
+              right: 40,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showImagePicker() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Выберите картинку',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 120,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _imageUrls.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      _sendImage(_imageUrls[index]);
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          _imageUrls[index],
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,14 +238,14 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             CircleAvatar(
               radius: 16,
-              backgroundImage: widget.chat.avatarUrl != null 
-                  ? NetworkImage(widget.chat.avatarUrl!) 
-                  : null,
-              child: widget.chat.avatarUrl == null 
+              backgroundImage: NetworkImage(
+                'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150',
+              ),
+              child: widget.chat.avatarUrl == null
                   ? Text(
-                      widget.chat.name.isNotEmpty ? widget.chat.name[0].toUpperCase() : '?',
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    )
+                widget.chat.name.isNotEmpty ? widget.chat.name[0].toUpperCase() : '?',
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              )
                   : null,
             ),
             const SizedBox(width: 8),
@@ -167,10 +306,15 @@ class _ChatScreenState extends State<ChatScreen> {
                 final showAvatar = index == _messages.length - 1 ||
                     _messages[index + 1].sender.id != message.sender.id;
 
-                return MessageBubble(
-                  message: message,
-                  isMe: isMe,
-                  showAvatar: showAvatar,
+                return GestureDetector(
+                  onTap: message.imageUrl != null
+                      ? () => _showImageDialog(message.imageUrl!)
+                      : null,
+                  child: MessageBubble(
+                    message: message,
+                    isMe: isMe,
+                    showAvatar: showAvatar,
+                  ),
                 );
               },
             ),
@@ -190,9 +334,11 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.attach_file),
-                  onPressed: () {
-                    // TODO: Implement file attachment
-                  },
+                  onPressed: _showImagePicker,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.photo_library),
+                  onPressed: _showImagePicker,
                 ),
                 Expanded(
                   child: TextField(
@@ -223,4 +369,3 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
-

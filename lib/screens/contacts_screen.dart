@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import '../models/chat.dart';
+import '../models/message.dart';
 import '../widgets/contact_list_item.dart';
+import 'chat_screen.dart';
 
 class ContactsScreen extends StatefulWidget {
   const ContactsScreen({super.key});
@@ -154,7 +157,27 @@ class _ContactsScreenState extends State<ContactsScreen> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              // TODO: Implement start chat
+              // Создаем новый чат с контактом
+              final currentUser = User(
+                id: '0',
+                name: 'Вы',
+                email: 'you@example.com',
+                lastSeen: DateTime.now(),
+                isOnline: true,
+              );
+              final newChat = Chat(
+                id: DateTime.now().millisecondsSinceEpoch.toString(),
+                name: contact.name,
+                participants: [currentUser, contact],
+                createdAt: DateTime.now(),
+                type: ChatType.direct,
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatScreen(chat: newChat),
+                ),
+              );
             },
             child: const Text('Написать'),
           ),

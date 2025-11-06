@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'notifications_settings_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -28,16 +29,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Card(
             child: Column(
               children: [
-                SwitchListTile(
+                ListTile(
+                  leading: const Icon(Icons.notifications),
                   title: const Text('Уведомления'),
-                  subtitle: const Text('Получать уведомления о новых сообщениях'),
-                  value: _notificationsEnabled,
-                  onChanged: (value) {
-                    setState(() {
-                      _notificationsEnabled = value;
-                    });
+                  subtitle: const Text('Настройки уведомлений'),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationsSettingsScreen(),
+                      ),
+                    );
                   },
                 ),
+                if (_notificationsEnabled) ...[
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: const Text('Включить уведомления'),
+                    subtitle: const Text('Получать уведомления о новых сообщениях'),
+                    value: _notificationsEnabled,
+                    onChanged: (value) {
+                      setState(() {
+                        _notificationsEnabled = value;
+                      });
+                    },
+                  ),
+                ],
                 if (_notificationsEnabled) ...[
                   const Divider(height: 1),
                   SwitchListTile(

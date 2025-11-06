@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -129,7 +130,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildProfileOption(
                     icon: Icons.person,
                     title: 'Редактировать профиль',
-                    onTap: () => _showEditProfileDialog(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditProfileScreen(user: _currentUser),
+                        ),
+                      );
+                    },
                   ),
                   const Divider(height: 1),
                   _buildProfileOption(

@@ -3,6 +3,7 @@ import '../models/chat.dart';
 import '../models/message.dart';
 import '../models/user.dart';
 import '../widgets/message_bubble.dart';
+import 'user_profile_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   final Chat chat;
@@ -234,42 +235,57 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 16,
-              backgroundImage: NetworkImage(
-                'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150',
+        title: GestureDetector(
+          onTap: () {
+            if (widget.chat.type == ChatType.direct) {
+              final otherUser = widget.chat.participants.firstWhere(
+                (user) => user.id != _currentUser.id,
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserProfileScreen(user: otherUser),
+                ),
+              );
+            }
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundImage: NetworkImage(
+                  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150',
+                ),
+                child: widget.chat.avatarUrl == null
+                    ? Text(
+                  widget.chat.name.isNotEmpty ? widget.chat.name[0].toUpperCase() : '?',
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                )
+                    : null,
               ),
-              child: widget.chat.avatarUrl == null
-                  ? Text(
-                widget.chat.name.isNotEmpty ? widget.chat.name[0].toUpperCase() : '?',
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              )
-                  : null,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.chat.name,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  if (widget.chat.type == ChatType.direct)
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      widget.chat.participants
-                          .firstWhere((user) => user.id != _currentUser.id)
-                          .isOnline
-                          ? 'В сети'
-                          : 'Был(а) в сети недавно',
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      widget.chat.name,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
-                ],
+                    if (widget.chat.type == ChatType.direct)
+                      Text(
+                        widget.chat.participants
+                            .firstWhere((user) => user.id != _currentUser.id)
+                            .isOnline
+                            ? 'В сети'
+                            : 'Был(а) в сети недавно',
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [

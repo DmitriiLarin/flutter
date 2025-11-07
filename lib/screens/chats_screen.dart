@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../models/chat.dart';
 import '../models/user.dart';
 import '../models/message.dart';
 import '../widgets/chat_list_item.dart';
-import 'chat_screen.dart';
 
 class ChatsScreen extends StatefulWidget {
   const ChatsScreen({super.key});
@@ -43,12 +43,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
           return ChatListItem(
             chat: chat,
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatScreen(chat: chat),
-                ),
-              );
+
+              context.push('/chat/${chat.id}', extra: chat);
             },
           );
         },
@@ -71,7 +67,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
         content: const Text('Функция создания нового чата будет реализована позже'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('OK'),
           ),
         ],

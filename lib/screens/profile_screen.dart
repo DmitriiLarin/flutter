@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../models/user.dart';
-import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -131,12 +131,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.person,
                     title: 'Редактировать профиль',
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditProfileScreen(user: _currentUser),
-                        ),
-                      );
+
+                      context.pushReplacement('/edit-profile', extra: _currentUser);
                     },
                   ),
                   const Divider(height: 1),
@@ -231,7 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         content: const Text('Функция редактирования профиля будет реализована позже'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('OK'),
           ),
         ],
@@ -247,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         content: const Text('Функция настройки уведомлений будет реализована позже'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('OK'),
           ),
         ],
@@ -263,7 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         content: const Text('Функция настроек безопасности будет реализована позже'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('OK'),
           ),
         ],
@@ -279,7 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         content: const Text('Центр помощи будет реализован позже'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('OK'),
           ),
         ],
@@ -303,7 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('OK'),
           ),
         ],
@@ -319,12 +315,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         content: const Text('Вы уверены, что хотите выйти из аккаунта?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('Отмена'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.pop();
               // TODO: Implement logout
             },
             child: const Text('Выйти', style: TextStyle(color: Colors.red)),

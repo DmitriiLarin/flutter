@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../models/user.dart';
 import '../models/chat.dart';
 import '../models/message.dart';
 import '../widgets/contact_list_item.dart';
-import 'chat_screen.dart';
 
 class ContactsScreen extends StatefulWidget {
   const ContactsScreen({super.key});
@@ -107,7 +107,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
         content: const Text('Функция добавления контакта будет реализована позже'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('OK'),
           ),
         ],
@@ -151,12 +151,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('Закрыть'),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.pop();
               // Создаем новый чат с контактом
               final currentUser = User(
                 id: '0',
@@ -172,12 +172,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 createdAt: DateTime.now(),
                 type: ChatType.direct,
               );
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatScreen(chat: newChat),
-                ),
-              );
+              context.push('/chat/${newChat.id}', extra: newChat);
             },
             child: const Text('Написать'),
           ),

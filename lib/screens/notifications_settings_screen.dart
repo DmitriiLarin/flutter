@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class NotificationsSettingsScreen extends StatelessWidget {
   const NotificationsSettingsScreen({super.key});
@@ -10,11 +11,16 @@ class NotificationsSettingsScreen extends StatelessWidget {
         title: const Text('Настройки уведомлений'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(16),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Text('Настройки уведомлений будут реализованы позже'),
+            const Text('Настройки уведомлений будут реализованы позже'),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => context.pop(),
+              child: const Text('Назад'),
+            ),
           ],
         ),
       ),

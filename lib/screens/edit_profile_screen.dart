@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../models/user.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -23,7 +24,7 @@ class EditProfileScreen extends StatelessWidget {
             const Text('Функция редактирования профиля будет реализована позже'),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
               child: const Text('Назад'),
             ),
           ],

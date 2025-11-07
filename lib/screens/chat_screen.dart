@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../models/chat.dart';
 import '../models/message.dart';
 import '../models/user.dart';
 import '../widgets/message_bubble.dart';
-import 'user_profile_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   final Chat chat;
@@ -174,7 +174,7 @@ class _ChatScreenState extends State<ChatScreen> {
               right: 40,
               child: IconButton(
                 icon: const Icon(Icons.close, color: Colors.white, size: 30),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => context.pop(),
               ),
             ),
           ],
@@ -206,7 +206,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   return GestureDetector(
                     onTap: () {
                       _sendImage(_imageUrls[index]);
-                      Navigator.of(context).pop();
+                      context.pop();
                     },
                     child: Container(
                       margin: const EdgeInsets.only(right: 8),
@@ -241,12 +241,8 @@ class _ChatScreenState extends State<ChatScreen> {
               final otherUser = widget.chat.participants.firstWhere(
                 (user) => user.id != _currentUser.id,
               );
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => UserProfileScreen(user: otherUser),
-                ),
-              );
+
+              context.push('/user-profile/${otherUser.id}', extra: otherUser);
             }
           },
           child: Row(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'notifications_settings_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -35,12 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   subtitle: const Text('Настройки уведомлений'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const NotificationsSettingsScreen(),
-                      ),
-                    );
+                    context.go('/notifications-settings');
                   },
                 ),
                 if (_notificationsEnabled) ...[
@@ -265,7 +260,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 setState(() {
                   _selectedTheme = value!;
                 });
-                Navigator.pop(context);
+                context.pop();
               },
             ),
             RadioListTile<String>(
@@ -276,7 +271,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 setState(() {
                   _selectedTheme = value!;
                 });
-                Navigator.pop(context);
+                context.pop();
               },
             ),
             RadioListTile<String>(
@@ -287,7 +282,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 setState(() {
                   _selectedTheme = value!;
                 });
-                Navigator.pop(context);
+                context.pop();
               },
             ),
           ],
@@ -312,7 +307,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 setState(() {
                   _selectedLanguage = value!;
                 });
-                Navigator.pop(context);
+                context.pop();
               },
             ),
             RadioListTile<String>(
@@ -323,7 +318,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 setState(() {
                   _selectedLanguage = value!;
                 });
-                Navigator.pop(context);
+                context.pop();
               },
             ),
           ],
@@ -350,7 +345,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('OK'),
           ),
         ],
@@ -366,12 +361,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: const Text('Это действие удалит временные файлы и освободит место на устройстве.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('Отмена'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.pop();
               // TODO: Implement cache clearing
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Кэш очищен')),
@@ -392,7 +387,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: const Text('Центр помощи будет реализован позже'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('OK'),
           ),
         ],
@@ -408,7 +403,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: const Text('Политика конфиденциальности будет реализована позже'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('OK'),
           ),
         ],
@@ -424,7 +419,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: const Text('Условия использования будут реализованы позже'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('OK'),
           ),
         ],

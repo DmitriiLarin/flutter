@@ -15,13 +15,14 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final UserService _userService = getIt<UserService>();
 
-  User get _currentUser {
+  User _getCurrentUser(BuildContext context) {
     final user = AppStateProvider.currentUserOf(context);
     return user ?? _userService.currentUser;
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = _getCurrentUser(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Профиль'),
@@ -47,13 +48,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage: _currentUser.avatarUrl != null 
-                          ? NetworkImage(_currentUser.avatarUrl!) 
+                      backgroundImage: currentUser.avatarUrl != null 
+                          ? NetworkImage(currentUser.avatarUrl!) 
                           : null,
-                      child: _currentUser.avatarUrl == null 
+                      child: currentUser.avatarUrl == null 
                           ? Text(
-                              _currentUser.name.isNotEmpty 
-                                  ? _currentUser.name[0].toUpperCase() 
+                              currentUser.name.isNotEmpty 
+                                  ? currentUser.name[0].toUpperCase() 
                                   : '?',
                               style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                             )
@@ -61,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      _currentUser.name,
+                      currentUser.name,
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -69,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _currentUser.email,
+                      currentUser.email,
                       style: TextStyle(
                         fontSize: 16,
                         color: Theme.of(context).textTheme.bodySmall?.color,
@@ -79,11 +80,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: _currentUser.isOnline ? Colors.green : Colors.grey,
+                        color: currentUser.isOnline ? Colors.green : Colors.grey,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        _currentUser.isOnline ? 'В сети' : 'Не в сети',
+                        currentUser.isOnline ? 'В сети' : 'Не в сети',
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -134,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: 'Редактировать профиль',
                     onTap: () {
 
-                      context.pushReplacement('/edit-profile', extra: _currentUser);
+                      context.pushReplacement('/edit-profile', extra: currentUser);
                     },
                   ),
                   const Divider(height: 1),

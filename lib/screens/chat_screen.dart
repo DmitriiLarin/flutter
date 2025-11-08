@@ -29,7 +29,9 @@ class _ChatScreenState extends State<ChatScreen> {
   final UserService _userService = getIt<UserService>();
   final ChatService _chatService = getIt<ChatService>();
 
-  User get _currentUser {
+  User get _currentUserFromService => _userService.currentUser;
+
+  User _getCurrentUser(BuildContext context) {
     final user = AppStateProvider.currentUserOf(context);
     return user ?? _userService.currentUser;
   }
@@ -56,8 +58,9 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _loadMessages() {
+    final currentUser = _currentUserFromService;
     final otherUser = widget.chat.participants.firstWhere(
-      (user) => user.id != _currentUser.id,
+      (user) => user.id != currentUser.id,
     );
 
     setState(() {
@@ -80,7 +83,7 @@ class _ChatScreenState extends State<ChatScreen> {
         Message(
           id: '3',
           chatId: widget.chat.id,
-          sender: _currentUser,
+          sender: currentUser,
           content: '',
           imageUrl: _imageUrls[1],
           timestamp: DateTime.now().subtract(const Duration(minutes: 7)),
@@ -88,7 +91,7 @@ class _ChatScreenState extends State<ChatScreen> {
         Message(
           id: '4',
           chatId: widget.chat.id,
-          sender: _currentUser,
+          sender: currentUser,
           content: '',
           imageUrl: _imageUrls[2],
           timestamp: DateTime.now().subtract(const Duration(minutes: 7)),
@@ -96,7 +99,7 @@ class _ChatScreenState extends State<ChatScreen> {
         Message(
           id: '5',
           chatId: widget.chat.id,
-          sender: _currentUser,
+          sender: currentUser,
           content: '',
           imageUrl: _imageUrls[3],
           timestamp: DateTime.now().subtract(const Duration(minutes: 7)),
@@ -117,10 +120,11 @@ class _ChatScreenState extends State<ChatScreen> {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
+    final currentUser = _currentUserFromService;
     final message = Message(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       chatId: widget.chat.id,
-      sender: _currentUser,
+      sender: currentUser,
       content: text,
       timestamp: DateTime.now(),
     );
@@ -129,7 +133,6 @@ class _ChatScreenState extends State<ChatScreen> {
       _messages.add(message);
     });
 
-    // Обновляем чат через GetIt ChatService
     _chatService.addMessageToChat(widget.chat.id, message);
 
     _messageController.clear();
@@ -137,10 +140,11 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _sendImage(String imageUrl) {
+    final currentUser = _currentUserFromService;
     final message = Message(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       chatId: widget.chat.id,
-      sender: _currentUser,
+      sender: currentUser,
       content: '',
       imageUrl: imageUrl,
       timestamp: DateTime.now(),
@@ -244,13 +248,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = _getCurrentUser(context);
+    
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
             if (widget.chat.type == ChatType.direct) {
               final otherUser = widget.chat.participants.firstWhere(
-                (user) => user.id != _currentUser.id,
+                (user) => user.id != currentUser.id,
               );
 
               context.push('/user-profile/${otherUser.id}', extra: otherUser);
@@ -282,7 +288,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     if (widget.chat.type == ChatType.direct)
                       Text(
                         widget.chat.participants
-                            .firstWhere((user) => user.id != _currentUser.id)
+                            .firstWhere((user) => user.id != currentUser.id)
                             .isOnline
                             ? 'В сети'
                             : 'Был(а) в сети недавно',
@@ -325,7 +331,7 @@ class _ChatScreenState extends State<ChatScreen> {
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
-                final isMe = message.sender.id == _currentUser.id;
+                final isMe = message.sender.id == currentUser.id;
                 final showAvatar = index == _messages.length - 1 ||
                     _messages[index + 1].sender.id != message.sender.id;
 

@@ -18,13 +18,14 @@ class ChatsScreen extends StatefulWidget {
 class _ChatsScreenState extends State<ChatsScreen> {
   final ChatService _chatService = getIt<ChatService>();
 
-  List<Chat> get _chats {
+  List<Chat> _getChats(BuildContext context) {
     final chats = AppStateProvider.chatsOf(context);
     return chats ?? _chatService.chats;
   }
 
   @override
   Widget build(BuildContext context) {
+    final chats = _getChats(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Чаты'),
@@ -45,9 +46,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
         ],
       ),
       body: ListView.builder(
-        itemCount: _chats.length,
+        itemCount: chats.length,
         itemBuilder: (context, index) {
-          final chat = _chats[index];
+          final chat = chats[index];
           return ChatListItem(
             chat: chat,
             onTap: () {

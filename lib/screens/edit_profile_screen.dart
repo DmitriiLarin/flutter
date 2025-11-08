@@ -19,11 +19,6 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final UserService _userService = getIt<UserService>();
-
-  User get _user {
-    final user = AppStateProvider.currentUserOf(context);
-    return user ?? widget.user;
-  }
   
   late TextEditingController _nameController;
   late TextEditingController _emailController;
@@ -31,8 +26,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: _user.name);
-    _emailController = TextEditingController(text: _user.email);
+    final initialUser = widget.user;
+    _nameController = TextEditingController(text: initialUser.name);
+    _emailController = TextEditingController(text: initialUser.email);
+  }
+
+  User _getUser(BuildContext context) {
+    final user = AppStateProvider.currentUserOf(context);
+    return user ?? widget.user;
   }
 
   @override
@@ -42,16 +43,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
-  void _saveProfile() {
-    final updatedUser = _user.copyWith(
+  void _saveProfile(BuildContext context) {
+    final currentUser = _getUser(context);
+    final updatedUser = currentUser.copyWith(
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
     );
     
-    // Обновляем через GetIt UserService
     _userService.updateUser(updatedUser);
     
-    // Показываем сообщение об успехе
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Профиль обновлен')),
     );
@@ -68,7 +68,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
-            onPressed: _saveProfile,
+            onPressed: () => _saveProfile(context),
           ),
         ],
       ),
@@ -95,7 +95,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _saveProfile,
+              onPressed: () => _saveProfile(context),
               child: const Text('Сохранить'),
             ),
           ],

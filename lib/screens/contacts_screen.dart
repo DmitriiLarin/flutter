@@ -24,7 +24,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
   final UserService _userService = getIt<UserService>();
   final ChatService _chatService = getIt<ChatService>();
 
-  User get _currentUser {
+  User _getCurrentUser(BuildContext context) {
     final user = AppStateProvider.currentUserOf(context);
     return user ?? _userService.currentUser;
   }
@@ -130,60 +130,62 @@ class _ContactsScreenState extends State<ContactsScreen> {
   void _showContactDetails(User contact) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(contact.name),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (contact.avatarUrl != null)
-              Center(
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundImage: NetworkImage(contact.avatarUrl!),
-                ),
-              )
-            else
-              Center(
-                child: CircleAvatar(
-                  radius: 40,
-                  child: Text(
-                    contact.name.isNotEmpty ? contact.name[0].toUpperCase() : '?',
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      builder: (dialogContext) {
+        final currentUser = _getCurrentUser(dialogContext);
+        return AlertDialog(
+          title: Text(contact.name),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (contact.avatarUrl != null)
+                Center(
+                  child: CircleAvatar(
+                    radius: 40,
+                    backgroundImage: NetworkImage(contact.avatarUrl!),
+                  ),
+                )
+              else
+                Center(
+                  child: CircleAvatar(
+                    radius: 40,
+                    child: Text(
+                      contact.name.isNotEmpty ? contact.name[0].toUpperCase() : '?',
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-              ),
-            const SizedBox(height: 16),
-            Text('Email: ${contact.email}'),
-            const SizedBox(height: 8),
-            Text('Статус: ${contact.isOnline ? 'В сети' : 'Не в сети'}'),
-            const SizedBox(height: 8),
-            Text('Последний раз в сети: ${_formatLastSeen(contact.lastSeen)}'),
+              const SizedBox(height: 16),
+              Text('Email: ${contact.email}'),
+              const SizedBox(height: 8),
+              Text('Статус: ${contact.isOnline ? 'В сети' : 'Не в сети'}'),
+              const SizedBox(height: 8),
+              Text('Последний раз в сети: ${_formatLastSeen(contact.lastSeen)}'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => dialogContext.pop(),
+              child: const Text('Закрыть'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                dialogContext.pop();
+                final newChat = Chat(
+                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  name: contact.name,
+                  participants: [currentUser, contact],
+                  createdAt: DateTime.now(),
+                  type: ChatType.direct,
+                );
+                _chatService.addChat(newChat);
+                context.push('/chat/${newChat.id}', extra: newChat);
+              },
+              child: const Text('Написать'),
+            ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => context.pop(),
-            child: const Text('Закрыть'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              context.pop();
-              // Создаем новый чат с контактом через GetIt ChatService
-              final newChat = Chat(
-                id: DateTime.now().millisecondsSinceEpoch.toString(),
-                name: contact.name,
-                participants: [_currentUser, contact],
-                createdAt: DateTime.now(),
-                type: ChatType.direct,
-              );
-              _chatService.addChat(newChat);
-              context.push('/chat/${newChat.id}', extra: newChat);
-            },
-            child: const Text('Написать'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 

@@ -4,6 +4,10 @@ import '../models/user.dart';
 import '../models/chat.dart';
 import '../models/message.dart';
 import '../widgets/contact_list_item.dart';
+import '../widgets/app_state_provider.dart';
+import '../services/service_locator.dart';
+import '../services/user_service.dart';
+import '../services/chat_service.dart';
 
 class ContactsScreen extends StatefulWidget {
   const ContactsScreen({super.key});
@@ -16,6 +20,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
   final List<User> _contacts = _generateMockContacts();
   final TextEditingController _searchController = TextEditingController();
   List<User> _filteredContacts = [];
+
+  final UserService _userService = getIt<UserService>();
+  final ChatService _chatService = getIt<ChatService>();
+
+  User get _currentUser {
+    final user = AppStateProvider.currentUserOf(context);
+    return user ?? _userService.currentUser;
+  }
 
   @override
   void initState() {
@@ -157,21 +169,15 @@ class _ContactsScreenState extends State<ContactsScreen> {
           ElevatedButton(
             onPressed: () {
               context.pop();
-              // Создаем новый чат с контактом
-              final currentUser = User(
-                id: '0',
-                name: 'Вы',
-                email: 'you@example.com',
-                lastSeen: DateTime.now(),
-                isOnline: true,
-              );
+              // Создаем новый чат с контактом через GetIt ChatService
               final newChat = Chat(
                 id: DateTime.now().millisecondsSinceEpoch.toString(),
                 name: contact.name,
-                participants: [currentUser, contact],
+                participants: [_currentUser, contact],
                 createdAt: DateTime.now(),
                 type: ChatType.direct,
               );
+              _chatService.addChat(newChat);
               context.push('/chat/${newChat.id}', extra: newChat);
             },
             child: const Text('Написать'),

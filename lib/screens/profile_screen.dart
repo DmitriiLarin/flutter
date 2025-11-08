@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/user.dart';
+import '../widgets/app_state_provider.dart';
+import '../services/service_locator.dart';
+import '../services/user_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -10,13 +13,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final User _currentUser = User(
-    id: '0',
-    name: 'Иван Петров',
-    email: 'ivan@example.com',
-    lastSeen: DateTime.now(),
-    isOnline: true,
-  );
+  final UserService _userService = getIt<UserService>();
+
+  User get _currentUser {
+    final user = AppStateProvider.currentUserOf(context);
+    return user ?? _userService.currentUser;
+  }
 
   @override
   Widget build(BuildContext context) {

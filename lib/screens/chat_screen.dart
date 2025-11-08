@@ -4,6 +4,10 @@ import '../models/chat.dart';
 import '../models/message.dart';
 import '../models/user.dart';
 import '../widgets/message_bubble.dart';
+import '../widgets/app_state_provider.dart';
+import '../services/service_locator.dart';
+import '../services/user_service.dart';
+import '../services/chat_service.dart';
 
 class ChatScreen extends StatefulWidget {
   final Chat chat;
@@ -21,13 +25,14 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<Message> _messages = [];
-  final User _currentUser = User(
-    id: '0',
-    name: 'Вы',
-    email: 'you@example.com',
-    lastSeen: DateTime.now(),
-    isOnline: true,
-  );
+
+  final UserService _userService = getIt<UserService>();
+  final ChatService _chatService = getIt<ChatService>();
+
+  User get _currentUser {
+    final user = AppStateProvider.currentUserOf(context);
+    return user ?? _userService.currentUser;
+  }
 
   final List<String> _imageUrls = [
     'https://i.pinimg.com/videos/thumbnails/originals/b8/3f/e1/b83fe15d51ecb3f5f15b85361bd67119.0000000.jpg',
@@ -124,6 +129,9 @@ class _ChatScreenState extends State<ChatScreen> {
       _messages.add(message);
     });
 
+    // Обновляем чат через GetIt ChatService
+    _chatService.addMessageToChat(widget.chat.id, message);
+
     _messageController.clear();
     _scrollToBottom();
   }
@@ -141,6 +149,9 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() {
       _messages.add(message);
     });
+
+    _chatService.addMessageToChat(widget.chat.id, message);
+    
     _scrollToBottom();
   }
 

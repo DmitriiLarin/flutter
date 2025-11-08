@@ -4,6 +4,9 @@ import '../models/chat.dart';
 import '../models/user.dart';
 import '../models/message.dart';
 import '../widgets/chat_list_item.dart';
+import '../widgets/app_state_provider.dart';
+import '../services/service_locator.dart';
+import '../services/chat_service.dart';
 
 class ChatsScreen extends StatefulWidget {
   const ChatsScreen({super.key});
@@ -13,7 +16,12 @@ class ChatsScreen extends StatefulWidget {
 }
 
 class _ChatsScreenState extends State<ChatsScreen> {
-  final List<Chat> _chats = _generateMockChats();
+  final ChatService _chatService = getIt<ChatService>();
+
+  List<Chat> get _chats {
+    final chats = AppStateProvider.chatsOf(context);
+    return chats ?? _chatService.chats;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,44 +81,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
         ],
       ),
     );
-  }
-
-  static List<Chat> _generateMockChats() {
-    final users = [
-      User(
-        id: '1',
-        name: 'Владимир Владимирович',
-        email: 'putinVV@example.com',
-        lastSeen: DateTime.now().subtract(const Duration(minutes: 5)),
-        isOnline: true,
-      ),
-    ];
-
-    final currentUser = User(
-      id: '0',
-      name: 'Вы',
-      email: 'you@example.com',
-      lastSeen: DateTime.now(),
-      isOnline: true,
-    );
-
-    return [
-      Chat(
-        id: '1',
-        name: 'Владимир Владимирович',
-        participants: [currentUser, users[0]],
-        lastMessage: Message(
-          id: '1',
-          chatId: '1',
-          sender: users[0],
-          content: 'Привет! А ты уже скачал MAX?',
-          timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
-        ),
-        unreadCount: 2,
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
-        type: ChatType.direct,
-      ),
-    ];
   }
 }
 

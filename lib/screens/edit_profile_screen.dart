@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../models/user.dart';
-import '../widgets/app_state_provider.dart';
+import '../providers/app_state_providers.dart';
 import '../services/service_locator.dart';
 import '../services/user_service.dart';
 
-class EditProfileScreen extends StatefulWidget {
+class EditProfileScreen extends ConsumerStatefulWidget {
   final User user;
 
   const EditProfileScreen({
@@ -14,10 +15,10 @@ class EditProfileScreen extends StatefulWidget {
   });
 
   @override
-  State<EditProfileScreen> createState() => _EditProfileScreenState();
+  ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
+class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final UserService _userService = getIt<UserService>();
   
   late TextEditingController _nameController;
@@ -31,11 +32,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _emailController = TextEditingController(text: initialUser.email);
   }
 
-  User _getUser(BuildContext context) {
-    final user = AppStateProvider.currentUserOf(context);
-    return user ?? widget.user;
-  }
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -44,13 +40,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _saveProfile(BuildContext context) {
-    final currentUser = _getUser(context);
+    final currentUser = ref.read(currentUserProvider);
     final updatedUser = currentUser.copyWith(
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
     );
     
     _userService.updateUser(updatedUser);
+    ref.read(currentUserProvider.notifier).updateUser(updatedUser);
     
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Профиль обновлен')),

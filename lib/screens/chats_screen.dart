@@ -1,31 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../models/chat.dart';
 import '../models/user.dart';
 import '../models/message.dart';
 import '../widgets/chat_list_item.dart';
-import '../widgets/app_state_provider.dart';
-import '../services/service_locator.dart';
-import '../services/chat_service.dart';
+import '../providers/app_state_providers.dart';
 
-class ChatsScreen extends StatefulWidget {
+class ChatsScreen extends ConsumerWidget {
   const ChatsScreen({super.key});
 
   @override
-  State<ChatsScreen> createState() => _ChatsScreenState();
-}
-
-class _ChatsScreenState extends State<ChatsScreen> {
-  final ChatService _chatService = getIt<ChatService>();
-
-  List<Chat> _getChats(BuildContext context) {
-    final chats = AppStateProvider.chatsOf(context);
-    return chats ?? _chatService.chats;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final chats = _getChats(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final chats = ref.watch(chatsProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Чаты'),
@@ -61,14 +48,14 @@ class _ChatsScreenState extends State<ChatsScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO: Implement new chat creation
-          _showNewChatDialog();
+          _showNewChatDialog(context);
         },
         child: const Icon(Icons.chat),
       ),
     );
   }
 
-  void _showNewChatDialog() {
+  void _showNewChatDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

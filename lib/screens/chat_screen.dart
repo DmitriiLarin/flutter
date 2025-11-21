@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../models/chat.dart';
 import '../models/message.dart';
 import '../models/user.dart';
 import '../widgets/message_bubble.dart';
-import '../widgets/app_state_provider.dart';
+import '../providers/app_state_providers.dart';
 import '../services/service_locator.dart';
-import '../services/user_service.dart';
 import '../services/chat_service.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends ConsumerStatefulWidget {
   final Chat chat;
 
   const ChatScreen({
@@ -18,22 +18,28 @@ class ChatScreen extends StatefulWidget {
   });
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<Message> _messages = [];
 
-  final UserService _userService = getIt<UserService>();
-  final ChatService _chatService = getIt<ChatService>();
+  late ChatService _chatService;
 
-  User get _currentUserFromService => _userService.currentUser;
+  @override
+  void initState() {
+    super.initState();
+    _chatService = getIt<ChatService>();
+  }
 
-  User _getCurrentUser(BuildContext context) {
-    final user = AppStateProvider.currentUserOf(context);
-    return user ?? _userService.currentUser;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_messages.isEmpty) {
+      _loadMessages();
+    }
   }
 
   final List<String> _imageUrls = [
@@ -44,11 +50,6 @@ class _ChatScreenState extends State<ChatScreen> {
     'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80_%D0%9F%D1%83%D1%82%D0%B8%D0%BD_%2831-12-2021%29.jpg/1200px-%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80_%D0%9F%D1%83%D1%82%D0%B8%D0%BD_%2831-12-2021%29.jpg',
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _loadMessages();
-  }
 
   @override
   void dispose() {
@@ -58,7 +59,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _loadMessages() {
-    final currentUser = _currentUserFromService;
+    final currentUser = ref.read(currentUserProvider);
     final otherUser = widget.chat.participants.firstWhere(
       (user) => user.id != currentUser.id,
     );
@@ -120,7 +121,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
-    final currentUser = _currentUserFromService;
+    final currentUser = ref.read(currentUserProvider);
     final message = Message(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       chatId: widget.chat.id,
@@ -140,7 +141,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _sendImage(String imageUrl) {
-    final currentUser = _currentUserFromService;
+    final currentUser = ref.read(currentUserProvider);
     final message = Message(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       chatId: widget.chat.id,
@@ -248,7 +249,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = _getCurrentUser(context);
+    final currentUser = ref.watch(currentUserProvider);
     
     return Scaffold(
       appBar: AppBar(

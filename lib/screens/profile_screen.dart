@@ -1,28 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../models/user.dart';
-import '../widgets/app_state_provider.dart';
-import '../services/service_locator.dart';
-import '../services/user_service.dart';
+import '../providers/app_state_providers.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  final UserService _userService = getIt<UserService>();
-
-  User _getCurrentUser(BuildContext context) {
-    final user = AppStateProvider.currentUserOf(context);
-    return user ?? _userService.currentUser;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final currentUser = _getCurrentUser(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentUser = ref.watch(currentUserProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Профиль'),
@@ -31,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              _showEditProfileDialog();
+              _showEditProfileDialog(context);
             },
           ),
         ],
@@ -134,7 +121,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.person,
                     title: 'Редактировать профиль',
                     onTap: () {
-
                       context.pushReplacement('/edit-profile', extra: currentUser);
                     },
                   ),
@@ -142,25 +128,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildProfileOption(
                     icon: Icons.notifications,
                     title: 'Уведомления',
-                    onTap: () => _showNotificationsSettings(),
+                    onTap: () => _showNotificationsSettings(context),
                   ),
                   const Divider(height: 1),
                   _buildProfileOption(
                     icon: Icons.security,
                     title: 'Безопасность',
-                    onTap: () => _showSecuritySettings(),
+                    onTap: () => _showSecuritySettings(context),
                   ),
                   const Divider(height: 1),
                   _buildProfileOption(
                     icon: Icons.help,
                     title: 'Помощь',
-                    onTap: () => _showHelp(),
+                    onTap: () => _showHelp(context),
                   ),
                   const Divider(height: 1),
                   _buildProfileOption(
                     icon: Icons.info,
                     title: 'О приложении',
-                    onTap: () => _showAbout(),
+                    onTap: () => _showAbout(context),
                   ),
                 ],
               ),
@@ -173,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Icons.logout,
                 title: 'Выйти',
                 textColor: Colors.red,
-                onTap: () => _showLogoutDialog(),
+                onTap: () => _showLogoutDialog(context),
               ),
             ),
           ],
@@ -222,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showEditProfileDialog() {
+  static void _showEditProfileDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -238,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showNotificationsSettings() {
+  static void _showNotificationsSettings(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -254,7 +240,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showSecuritySettings() {
+  static void _showSecuritySettings(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -270,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showHelp() {
+  static void _showHelp(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -286,7 +272,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showAbout() {
+  static void _showAbout(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -310,7 +296,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showLogoutDialog() {
+  static void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

@@ -1,40 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../models/user.dart';
 import '../models/chat.dart';
 import '../models/message.dart';
 import '../widgets/contact_list_item.dart';
-import '../widgets/app_state_provider.dart';
+import '../providers/app_state_providers.dart';
 import '../services/service_locator.dart';
-import '../services/user_service.dart';
 import '../services/chat_service.dart';
 
-class ContactsScreen extends StatefulWidget {
+class ContactsScreen extends ConsumerStatefulWidget {
   const ContactsScreen({super.key});
 
   @override
-  State<ContactsScreen> createState() => _ContactsScreenState();
+  ConsumerState<ContactsScreen> createState() => _ContactsScreenState();
 }
 
-class _ContactsScreenState extends State<ContactsScreen> {
+class _ContactsScreenState extends ConsumerState<ContactsScreen> {
   final List<User> _contacts = _generateMockContacts();
   final TextEditingController _searchController = TextEditingController();
   List<User> _filteredContacts = [];
 
-  final UserService _userService = getIt<UserService>();
-  final ChatService _chatService = getIt<ChatService>();
-
-  User _getCurrentUser(BuildContext context) {
-    final user = AppStateProvider.currentUserOf(context);
-    return user ?? _userService.currentUser;
-  }
+  late ChatService _chatService;
 
   @override
   void initState() {
     super.initState();
+    _chatService = getIt<ChatService>();
     _filteredContacts = _contacts;
     _searchController.addListener(_filterContacts);
   }
+
 
   @override
   void dispose() {
@@ -131,7 +127,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
     showDialog(
       context: context,
       builder: (dialogContext) {
-        final currentUser = _getCurrentUser(dialogContext);
+        final currentUser = ref.read(currentUserProvider);
         return AlertDialog(
           title: Text(contact.name),
           content: Column(
@@ -179,6 +175,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                   type: ChatType.direct,
                 );
                 _chatService.addChat(newChat);
+                ref.read(chatsProvider.notifier).addChat(newChat);
                 context.push('/chat/${newChat.id}', extra: newChat);
               },
               child: const Text('Написать'),

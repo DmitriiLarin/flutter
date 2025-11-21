@@ -102,9 +102,9 @@ class ProfileScreen extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildStatItem('Чаты', '12', Icons.chat),
-                        _buildStatItem('Сообщения', '1,234', Icons.message),
-                        _buildStatItem('Контакты', '45', Icons.contacts),
+                        _buildStatItem(context, 'Чаты', '12', Icons.chat),
+                        _buildStatItem(context, 'Сообщения', '1,234', Icons.message),
+                        _buildStatItem(context, 'Контакты', '45', Icons.contacts),
                       ],
                     ),
                   ],
@@ -168,7 +168,7 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon) {
+  Widget _buildStatItem(BuildContext context, String label, String value, IconData icon) {
     return Column(
       children: [
         Icon(icon, size: 32, color: Theme.of(context).colorScheme.primary),
